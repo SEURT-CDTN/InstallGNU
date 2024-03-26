@@ -1,0 +1,53 @@
+pkgname=TrigaServer
+pkgver=v0.0.0
+pkgrel=1
+pkgdesc="TrigaServer is a software for GNU operating system to get the real-time values of the Nuclear Reator Triga IPR-R1 and share in network."
+arch=('x86_64')
+url="https://github.com/SEURT-CDTN/TrigaServer"
+license=('GPLv3')
+
+source=("${pkgname}::git+${url}.git")
+
+
+
+md5sums=('SKIP')
+
+depends=()
+
+makedepends=(
+    git
+    base-devel
+    cmake
+    boost
+    cxxopts
+    libserialport
+    libmodbus #AUR
+)
+
+conflicts=()
+
+provides=("${pkgname%-pkgver}")
+
+build() {
+    cd "$srcdir/${pkgname}"
+    rm -rf build
+    mkdir build && cd build
+    cmake ..
+
+    _ccores=$(nproc)
+    # check if _ccores is a positive integer, if not, serial build
+    if [[ "${_ccores}" =~ ^[1-9][0-9]*$ ]]; then
+        make -j "${_ccores}"
+    else
+        make
+    fi
+}
+
+package() {
+    cd "$srcdir/${pkgname}/build"                    #Vá para o diretório build
+    make DESTDIR="$pkgdir/" install                   #Execute o comando "make intall" mas com diretório destino como o pacote "$pkgdir/"
+    rm -rf "$srcdir/${pkgname}/build"                #Sendo a instalação bem sucedida remova os arquivos de compilação
+
+    # Remove debug files
+    find "$pkgdir" -type f -name "*.debug" -delete
+}
