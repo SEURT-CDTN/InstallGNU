@@ -14,8 +14,9 @@ echo """
 ##############################################################
 ##############################################################
 ######                                                  ######
-######                     PARTE 2:                     ######
+######                     PARTE 3:                     ######
 ######              Configuração do sistema             ######
+######                em ambiente chroot                ######
 ######                                                  ######
 ##############################################################
 ##############################################################
@@ -34,32 +35,42 @@ echo "{[( Configurando locales e mapa do teclado )]}"
 echo "KEYMAP=br-abnt2" >> /etc/vconsole.conf
 echo "pt_BR.UTF-8 UTF-8" >> /etc/locale.gen
 locale-gen
-echo "LANG=pt_BR.UTF-8"              >  /etc/locale.conf
-echo "LANGUAGE=pt_BR.UTF-8"          >> /etc/locale.conf
-echo "LC_ADDRESS=pt_BR.UTF-8"        >> /etc/locale.conf
-echo "LC_COLLATE=pt_BR.UTF-8"        >> /etc/locale.conf
-echo "LC_CTYPE=pt_BR.UTF-8"          >> /etc/locale.conf
-echo "LC_IDENTIFICATION=pt_BR.UTF-8" >> /etc/locale.conf
-echo "LC_MEASUREMENT=pt_BR.UTF-8"    >> /etc/locale.conf
-echo "LC_MESSAGES=pt_BR.UTF-8"       >> /etc/locale.conf
-echo "LC_MONETARY=pt_BR.UTF-8"       >> /etc/locale.conf
-echo "LC_NAME=pt_BR.UTF-8"           >> /etc/locale.conf
-echo "LC_NUMERIC=pt_BR.UTF-8"        >> /etc/locale.conf
-echo "LC_PAPER=pt_BR.UTF-8"          >> /etc/locale.conf
-echo "LC_TELEPHONE=pt_BR.UTF-8"      >> /etc/locale.conf
-echo "LC_TIME=pt_BR.UTF-8"           >> /etc/locale.conf
+echo """
+LANG=pt_BR.UTF-8
+LANGUAGE=pt_BR.UTF-8
+LC_ADDRESS=pt_BR.UTF-8
+LC_COLLATE=pt_BR.UTF-8
+LC_CTYPE=pt_BR.UTF-8
+LC_IDENTIFICATION=pt_BR.UTF-
+LC_MEASUREMENT=pt_BR.UTF-8
+LC_MESSAGES=pt_BR.UTF-8
+LC_MONETARY=pt_BR.UTF-8
+LC_NAME=pt_BR.UTF-8
+LC_NUMERIC=pt_BR.UTF-8
+LC_PAPER=pt_BR.UTF-8
+LC_TELEPHONE=pt_BR.UTF-8
+LC_TIME=pt_BR.UTF-8
+""" > /etc/locale.conf
 
 # Hostname
 echo "{[( Configurando Hostname )]}"
 echo "ServidorTriga" > /etc/hostname
-echo "127.0.0.1   localhost" >  /etc/hosts
-echo "::1         localhost" >> /etc/hosts
-echo "127.0.1.1   ServidorTriga.localdomain ServidorTriga" >> /etc/hosts
+echo """
+127.0.0.1   localhost
+::1         localhost
+127.0.1.1   ServidorTriga.localdomain ServidorTriga
+""" > /etc/hosts
 
 # Ativando serviço do NetworkManager e SSHD
 echo "{[( Ativando serviço do NetworkManager e SSHD )]}"
 systemctl enable NetworkManager.service
 systemctl enable sshd.service
+
+# Configurar pacman
+echo "{[( Configurando pacman )]}"
+systemctl disable reflector.service
+cp -f /root/mirrorlist /etc/pacman.d/mirrorlist
+cp -f /root/pacman.conf /etc/pacman.conf
 
 # Senha do root
 echo "{[( Criando senha para root )]}"

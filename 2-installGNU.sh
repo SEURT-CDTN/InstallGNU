@@ -14,7 +14,7 @@ echo """
 ##############################################################
 ##############################################################
 ######                                                  ######
-######                     PARTE 1:                     ######
+######                     PARTE 2:                     ######
 ######     Formatação e instalação do sistema base      ######
 ######                                                  ######
 ##############################################################
@@ -24,19 +24,7 @@ echo """
 """
 read -p "Pressione enter para iniciar... "
 
-
-# Fontes, locales e mapa do teclado
-echo "{[( Configurando fontes, locales e mapa do teclado )]}"
-loadkeys br-abnt2
-setfont ter-132b
-echo "pt_BR.UTF-8 UTF-8" >> /etc/locale.gen
-locale-gen
-export LANG=pt_BR.UTF-8
-
-# Conectar a internet pelo Wifi EDUROAM
-echo "{[( Conectando a internet pelo Wifi EDUROAM )]}"
-systemctl start NetworkManager.service
-python ./eduroam-linux-CDTN.py
+set -e
 
 # Atualizar relógio
 echo "{[( Atualizando relógio )]}"
@@ -75,19 +63,29 @@ mount /dev/nvme0n1p4 /mnt
 mount --mkdir /dev/nvme0n1p6 /mnt/home
 mount --mkdir /dev/nvme0n1p1 /mnt/boot/efi
 
+# Configuração dos repositórios
+echo "{[( Configurando repositórios )]}"
+systemctl stop reflector.service
+cp -f mirrorlist /etc/pacman.d/mirrorlist
+cp -f pacman.conf /etc/pacman.conf
+#pacman -Sy archlinux-keyring
+#pacman -Sy
+
 # Instalação do sistema base
 echo "{[( Instalando sistema base )]}"
-sudo pacman -Sy archlinux-keyring
-pacstrap -K /mnt base linux linux-firmware intel-ucode grub efibootmgr nano vim e2fsprogs ntfs-3g networkmanager sudo
+pacstrap -K /mnt base linux linux-firmware intel-ucode grub efibootmgr nano vim e2fsprogs ntfs-3g networkmanager sudo openssh python dbus dbus-python
 
 # Gerar fstab
 echo "{[( Gerando fstab )]}"
 genfstab -U /mnt >> /mnt/etc/fstab
 
 # Copiar script para pasta root
-echo "{[( Copiando script para pasta root )]}"
-cp configGNU.sh /mnt/root
+echo "{[( Copiando script de configuração para pasta root )]}"
+cp 3-configGNU.sh /mnt/root
+cp eduroam-linux-CDTN.py /mnt/root
+cp mirrorlist /mnt/root
+cp pacman.conf /mnt/root
 
 # Fazer chroot e executar script de configuração
 echo "{[( Fazendo chroot e executando script de configuração )]}"
-arch-chroot /mnt ./configGNU.sh
+arch-chroot /mnt /root/3-configGNU.sh
