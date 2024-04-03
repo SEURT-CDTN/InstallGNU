@@ -1,0 +1,14 @@
+[Unit]
+Description=Setup Modbus links
+
+[Service]
+Type=oneshot
+RemainAfterExit=true
+User=root
+ExecStart=/usr/local/bin/setup_modbus_links.sh
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=setup_modbus_links
+
+[Install]
+WantedBy=multi-user.target
