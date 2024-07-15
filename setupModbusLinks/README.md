@@ -2,8 +2,8 @@
 
 O objetivo deste script é criar os links simbolicos em `/dev/modbus` com nomes correspondentes a cada respectivo dispositivo conectado, baseado em posições das portas USB:
 
-- 1-5 (Porta USB trazeira superior direita): Spu ChA
-- 1-6 (Porta USB trazeira superior esquerda): Spu ChB
+- 1-1 (Porta USB TIPO-C superior): Spu ChA
+- 1-2 (Porta USB TIPO-C inferior): Spu ChB
 
 ## Instalação
 
