@@ -1,9 +1,9 @@
-pkgname=TrigaServer
+pkgname=TrigaMirror
 pkgver=v0.0.1
 pkgrel=1
-pkgdesc="TrigaServer is a software for GNU operating system to get the real-time values of the Nuclear Reator Triga IPR-R1 and share in network."
+pkgdesc="TrigaMirror is a softwate to get the flux data of TrigaServer and share in network."
 arch=('x86_64')
-url="https://github.com/TRIGA-IPR-R1/TrigaServer"
+url="https://github.com/TRIGA-IPR-R1/TrigaMirror"
 license=('GPLv3')
 
 source=("${pkgname}::git+${url}.git")
@@ -20,8 +20,7 @@ makedepends=(
     cmake
     boost
     cxxopts
-    libserialport
-    libmodbus #AUR
+    openssl
 )
 
 conflicts=()
@@ -45,7 +44,7 @@ build() {
 
 package() {
     cd "$srcdir/${pkgname}/build"                    #Vá para o diretório build
-    make DESTDIR="$pkgdir/" install                   #Execute o comando "make intall" mas com diretório destino como o pacote "$pkgdir/"
+    make DESTDIR="$pkgdir/" install                  #Execute o comando "make intall" mas com diretório destino como o pacote "$pkgdir/"
     rm -rf "$srcdir/${pkgname}/build"                #Sendo a instalação bem sucedida remova os arquivos de compilação
 
     # Remove debug files
